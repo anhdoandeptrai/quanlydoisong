@@ -21,7 +21,7 @@ dependencies:
   path_provider: ^2.0.0
   table_calendar: ^3.0.7
   uuid: ^4.5.0
-  google_sign_in: ^6.2.2 # Sử dụng phiên bản mới hơn, tương thích với Firebase
+  google_sign_in: ^6.2.2 
   google_generative_ai: ^0.4.6
   flutter_local_notifications: ^18.0.1
   flutter_lints: ^4.0.0
@@ -44,7 +44,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # # Kích hoạt assets nếu bạn cần sử dụng hình ảnh, hoặc bỏ qua nếu không cần
+  
   assets:
     - assets/logo.png
     - assets/vietnam_provinces.json
