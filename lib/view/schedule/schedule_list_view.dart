@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:quanlydoisong/controllers/schedule_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import '../../controllers/schedule_controller.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../models/schedule.dart';
 import 'add_schedule_view.dart';
 import 'edit_schedule_view.dart';
@@ -86,19 +87,21 @@ extension ScheduleTypeExtension on String {
 }
 
 class ScheduleListView extends StatefulWidget {
+  const ScheduleListView({super.key});
+
   @override
   State<ScheduleListView> createState() => _ScheduleListViewState();
 }
 
 class _ScheduleListViewState extends State<ScheduleListView> {
-  final ScheduleController scheduleController = Get.find<ScheduleController>();
+  final Box<Schedule> scheduleBox = Hive.box<Schedule>('schedules');
   DateTime _selectedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Lịch trình của bạn',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
@@ -115,9 +118,10 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: TableCalendar(
               firstDay: DateTime(2020),
               lastDay: DateTime(2050),
@@ -134,16 +138,16 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                   color: Colors.teal.withOpacity(0.5),
                   shape: BoxShape.circle,
                 ),
-                selectedDecoration: BoxDecoration(
+                selectedDecoration: const BoxDecoration(
                   color: Colors.orange,
                   shape: BoxShape.circle,
                 ),
-                markerDecoration: BoxDecoration(
+                markerDecoration: const BoxDecoration(
                   color: Colors.blue,
                   shape: BoxShape.circle,
                 ),
               ),
-              headerStyle: HeaderStyle(
+              headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleTextStyle:
                     TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -151,68 +155,94 @@ class _ScheduleListViewState extends State<ScheduleListView> {
                 rightChevronIcon:
                     Icon(Icons.chevron_right, color: Colors.black),
               ),
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, date, events) {
+                  final hasSchedule = scheduleBox.values.any((schedule) =>
+                      isSameDay(schedule.startTime, date) ||
+                      isSameDay(schedule.endTime, date));
+                  if (hasSchedule) {
+                    return Positioned(
+                      bottom: 1,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                        ),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
           // Schedule List Section
           Expanded(
-            child: Obx(() {
-              final selectedSchedules = scheduleController.schedules
-                  .where((s) =>
-                      isSameDay(s.startTime, _selectedDay) ||
-                      isSameDay(s.endTime, _selectedDay))
-                  .toList();
+            child: ValueListenableBuilder(
+              valueListenable: scheduleBox.listenable(),
+              builder: (context, Box<Schedule> box, _) {
+                final selectedSchedules = box.values
+                    .where((s) =>
+                        isSameDay(s.startTime, _selectedDay) ||
+                        isSameDay(s.endTime, _selectedDay))
+                    .toList();
 
-              if (selectedSchedules.isEmpty) {
-                return Center(
-                  child: Text(
-                    'Không có lịch trình nào trong ngày này.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                );
-              }
-
-              final groupedSchedules = _groupSchedulesByType(selectedSchedules);
-
-              return ListView(
-                children: groupedSchedules.entries.map((entry) {
-                  final type = entry.key;
-                  final schedules = entry.value;
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Card(
-                      margin: EdgeInsets.only(top: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 3,
-                      child: ExpansionTile(
-                        leading:
-                            Icon(type.displayIcon, color: type.displayColor),
-                        title: Text(
-                          type.displayTitle,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: type.displayColor,
-                          ),
-                        ),
-                        children: schedules
-                            .map((schedule) => ScheduleTile(schedule: schedule))
-                            .toList(),
-                      ),
+                if (selectedSchedules.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Không có lịch trình nào trong ngày này.',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   );
-                }).toList(),
-              );
-            }),
+                }
+
+                final groupedSchedules =
+                    _groupSchedulesByType(selectedSchedules);
+
+                return ListView(
+                  children: groupedSchedules.entries.map((entry) {
+                    final type = entry.key;
+                    final schedules = entry.value;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Card(
+                        margin: const EdgeInsets.only(top: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 3,
+                        child: ExpansionTile(
+                          leading:
+                              Icon(type.displayIcon, color: type.displayColor),
+                          title: Text(
+                            type.displayTitle,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: type.displayColor,
+                            ),
+                          ),
+                          children: schedules
+                              .map((schedule) =>
+                                  ScheduleTile(schedule: schedule))
+                              .toList(),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.to(() => AddScheduleView()),
-        child: Icon(Icons.add, color: Colors.white),
+        onPressed: () => Get.to(() => const AddScheduleView()),
         backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -230,7 +260,7 @@ class _ScheduleListViewState extends State<ScheduleListView> {
 class ScheduleTile extends StatelessWidget {
   final Schedule schedule;
 
-  const ScheduleTile({Key? key, required this.schedule}) : super(key: key);
+  const ScheduleTile({super.key, required this.schedule});
 
   @override
   Widget build(BuildContext context) {
@@ -243,34 +273,46 @@ class ScheduleTile extends StatelessWidget {
     final backgroundColor = schedule.type.displayColor.withOpacity(0.2);
 
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      color: backgroundColor, // Áp dụng màu nền
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      color: backgroundColor,
       child: ListTile(
+        leading: Checkbox(
+          value: schedule.isCompleted,
+          onChanged: (value) {
+            final controller = Get.find<ScheduleController>();
+            controller.toggleCompletion(schedule.id);
+          },
+        ),
         title: Text(
           schedule.title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.black, // Đặt màu chữ là đen
+            color: schedule.isCompleted ? Colors.grey : Colors.black,
+            decoration: schedule.isCompleted
+                ? TextDecoration.lineThrough
+                : TextDecoration.none,
           ),
         ),
         subtitle: Text(
           'Từ: $formattedStart\nĐến: $formattedEnd',
           style: TextStyle(
-            color: Colors.black, // Đặt màu chữ là đen
+            color: schedule.isCompleted ? Colors.grey : Colors.black,
           ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(Icons.edit, color: Colors.blue),
+              icon: const Icon(Icons.edit, color: Colors.blue),
               onPressed: () =>
                   Get.to(() => EditScheduleView(scheduleId: schedule.id)),
             ),
             IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: () =>
-                  Get.find<ScheduleController>().removeSchedule(schedule.id),
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                final controller = Get.find<ScheduleController>();
+                controller.removeSchedule(schedule.id);
+              },
             ),
           ],
         ),

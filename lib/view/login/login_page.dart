@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -206,8 +208,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Expanded(child: Divider(color: Colors.black26)),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),

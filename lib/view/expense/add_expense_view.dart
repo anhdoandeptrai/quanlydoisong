@@ -4,6 +4,8 @@ import '../../controllers/expense_controller.dart';
 import 'package:intl/intl.dart';
 
 class AddExpenseView extends StatefulWidget {
+  const AddExpenseView({super.key});
+
   @override
   _AddExpenseViewState createState() => _AddExpenseViewState();
 }
@@ -30,7 +32,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thêm Chi Tiêu Mới'),
+        title: const Text('Thêm Chi Tiêu Mới'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -41,8 +43,9 @@ class _AddExpenseViewState extends State<AddExpenseView> {
               children: [
                 // Số tiền
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Số Tiền (VND)'),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(labelText: 'Số Tiền (VND)'),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Vui lòng nhập số tiền';
@@ -57,12 +60,12 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                     amount = double.parse(value!);
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Danh mục chi tiêu
                 DropdownButtonFormField<String>(
                   value: category,
-                  decoration: InputDecoration(labelText: 'Danh Mục'),
+                  decoration: const InputDecoration(labelText: 'Danh Mục'),
                   items: categories.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
@@ -81,7 +84,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Chọn ngày chi tiêu
                 Row(
@@ -108,21 +111,21 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Mô tả chi tiêu
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Mô Tả'),
+                  decoration: const InputDecoration(labelText: 'Mô Tả'),
                   maxLines: 3,
                   onSaved: (value) {
                     description = value ?? '';
                   },
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Nút Thêm
                 ElevatedButton(
-                  child: Text('Thêm Chi Tiêu'),
+                  child: const Text('Thêm Chi Tiêu'),
                   onPressed: () {
                     if (_formKey.currentState!.validate() && date != null) {
                       _formKey.currentState!.save();

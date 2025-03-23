@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quanlydoisong/controllers/selection_controller.dart%2002-18-22-645.dart';
-import 'package:quanlydoisong/view/home_view.dart';
+
+import 'home_page.dart';
 
 class PreferenceSelectionPage extends StatelessWidget {
+  const PreferenceSelectionPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<PreferenceController>();
@@ -11,7 +14,7 @@ class PreferenceSelectionPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Cá Nhân Hóa Sở Thích',
           style: TextStyle(fontSize: 20, color: Colors.black),
         ),
@@ -31,29 +34,29 @@ class PreferenceSelectionPage extends StatelessWidget {
                 height: 250,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Avatar Section
             Center(
               child: CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.blueAccent.withOpacity(0.1),
-                child: Icon(
+                child: const Icon(
                   Icons.favorite,
                   size: 60,
                   color: Colors.blueAccent,
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Heading Section
-            Text(
+            const Text(
               'Chọn Sở Thích',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Interests Section as Chips
             Obx(
               () => Wrap(
@@ -67,9 +70,9 @@ class PreferenceSelectionPage extends StatelessWidget {
                       controller.togglePreference(interests);
                     },
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      duration: const Duration(milliseconds: 300),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? Colors.blueAccent
@@ -80,7 +83,7 @@ class PreferenceSelectionPage extends StatelessWidget {
                                 BoxShadow(
                                   color: Colors.blueAccent.withOpacity(0.3),
                                   blurRadius: 10,
-                                  offset: Offset(0, 4),
+                                  offset: const Offset(0, 4),
                                 ),
                               ]
                             : [],
@@ -99,7 +102,7 @@ class PreferenceSelectionPage extends StatelessWidget {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Save Button
             Center(
               child: ElevatedButton(
@@ -108,16 +111,17 @@ class PreferenceSelectionPage extends StatelessWidget {
                       snackPosition: SnackPosition.TOP,
                       backgroundColor: Colors.white,
                       colorText: Colors.black);
-                  Get.off(() => HomeView());
+                  Get.off(() => const HomePage());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Lưu Sở Thích',
                   style: TextStyle(
                       fontSize: 16,

@@ -20,7 +20,7 @@ class PreferenceController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadPreferences(); // Gọi khi controller khởi tạo
+    _loadPreferences();
   }
 
   void togglePreference(String interest) {
@@ -59,9 +59,11 @@ class PreferenceController extends GetxController {
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
-        final doc = await _firestore.collection('users').doc(currentUser.uid).get();
+        final doc =
+            await _firestore.collection('users').doc(currentUser.uid).get();
         if (doc.exists && doc.data() != null) {
-          final firestorePreferences = List<String>.from(doc.data()!['interests'] ?? []);
+          final firestorePreferences =
+              List<String>.from(doc.data()!['interests'] ?? []);
           selectedPreferences.assignAll(firestorePreferences);
 
           // Cập nhật Hive để đồng bộ dữ liệu

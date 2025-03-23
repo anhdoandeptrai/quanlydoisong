@@ -5,7 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 class CalendarPage extends StatefulWidget {
   final Map<String, List<Map<String, dynamic>>> transactions;
 
-  CalendarPage({required this.transactions});
+  const CalendarPage({super.key, required this.transactions});
 
   @override
   _CalendarPageState createState() => _CalendarPageState();
@@ -19,7 +19,7 @@ class _CalendarPageState extends State<CalendarPage> {
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.blueAccent, Colors.lightBlue],
               begin: Alignment.topLeft,
@@ -27,7 +27,7 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Lịch chi tiêu',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -36,7 +36,7 @@ class _CalendarPageState extends State<CalendarPage> {
         children: [
           _buildCalendar(),
           _buildDailySummary(),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           _buildTransactionList(),
         ],
       ),
@@ -45,13 +45,15 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Widget _buildCalendar() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-              color: Colors.grey.shade300, blurRadius: 5, offset: Offset(0, 3)),
+              color: Colors.grey.shade300,
+              blurRadius: 5,
+              offset: const Offset(0, 3)),
         ],
       ),
       child: TableCalendar(
@@ -67,7 +69,7 @@ class _CalendarPageState extends State<CalendarPage> {
         },
         calendarFormat: CalendarFormat.month,
         eventLoader: _getEventsForDay,
-        calendarStyle: CalendarStyle(
+        calendarStyle: const CalendarStyle(
           selectedDecoration: BoxDecoration(
             color: Colors.blueAccent,
             shape: BoxShape.circle,
@@ -81,7 +83,7 @@ class _CalendarPageState extends State<CalendarPage> {
             shape: BoxShape.circle,
           ),
         ),
-        headerStyle: HeaderStyle(
+        headerStyle: const HeaderStyle(
           formatButtonVisible: false,
           titleCentered: true,
           titleTextStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -125,10 +127,10 @@ class _CalendarPageState extends State<CalendarPage> {
           style: TextStyle(
               fontSize: 16, fontWeight: FontWeight.bold, color: color),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           '${amount.toStringAsFixed(0)} VNĐ',
-          style: TextStyle(fontSize: 14, color: Colors.black),
+          style: const TextStyle(fontSize: 14, color: Colors.black),
         ),
       ],
     );
@@ -140,20 +142,20 @@ class _CalendarPageState extends State<CalendarPage> {
 
     return Expanded(
       child: transactionsForDay.isEmpty
-          ? Center(
+          ? const Center(
               child: Text(
                 'Không có giao dịch nào',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               itemCount: transactionsForDay.length,
               itemBuilder: (context, index) {
                 final transaction = transactionsForDay[index];
                 return Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  padding: EdgeInsets.all(10),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -161,7 +163,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       BoxShadow(
                           color: Colors.grey.shade200,
                           blurRadius: 5,
-                          offset: Offset(0, 3)),
+                          offset: const Offset(0, 3)),
                     ],
                   ),
                   child: Row(
@@ -177,14 +179,14 @@ class _CalendarPageState extends State<CalendarPage> {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               transaction['category'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             Text(transaction['note']),
@@ -210,11 +212,11 @@ class _CalendarPageState extends State<CalendarPage> {
                           }
                         },
                         itemBuilder: (context) => [
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: 'edit',
                             child: Text('Sửa'),
                           ),
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: 'delete',
                             child: Text('Xóa'),
                           ),
@@ -257,7 +259,7 @@ class _CalendarPageState extends State<CalendarPage> {
 class _EditTransactionDialog extends StatefulWidget {
   final Map<String, dynamic> transaction;
 
-  _EditTransactionDialog({required this.transaction});
+  const _EditTransactionDialog({required this.transaction});
 
   @override
   State<_EditTransactionDialog> createState() => _EditTransactionDialogState();
@@ -291,21 +293,21 @@ class _EditTransactionDialogState extends State<_EditTransactionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Sửa giao dịch'),
+      title: const Text('Sửa giao dịch'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: categoryController,
-            decoration: InputDecoration(labelText: 'Danh mục'),
+            decoration: const InputDecoration(labelText: 'Danh mục'),
           ),
           TextField(
             controller: noteController,
-            decoration: InputDecoration(labelText: 'Ghi chú'),
+            decoration: const InputDecoration(labelText: 'Ghi chú'),
           ),
           TextField(
             controller: amountController,
-            decoration: InputDecoration(labelText: 'Số tiền'),
+            decoration: const InputDecoration(labelText: 'Số tiền'),
             keyboardType: TextInputType.number,
           ),
           DropdownButton<String>(
@@ -315,7 +317,7 @@ class _EditTransactionDialogState extends State<_EditTransactionDialog> {
                 type = value!;
               });
             },
-            items: [
+            items: const [
               DropdownMenuItem(value: 'income', child: Text('Thu nhập')),
               DropdownMenuItem(value: 'expense', child: Text('Chi tiêu')),
             ],
@@ -325,7 +327,7 @@ class _EditTransactionDialogState extends State<_EditTransactionDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Hủy'),
+          child: const Text('Hủy'),
         ),
         TextButton(
           onPressed: () {
@@ -336,7 +338,7 @@ class _EditTransactionDialogState extends State<_EditTransactionDialog> {
               'type': type,
             });
           },
-          child: Text('Lưu'),
+          child: const Text('Lưu'),
         ),
       ],
     );

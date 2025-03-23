@@ -9,7 +9,8 @@ class EditBudgetDialog extends StatefulWidget {
   final String initialCategory;
   final VoidCallback onSave;
 
-  EditBudgetDialog({
+  const EditBudgetDialog({
+    super.key,
     required this.amountController,
     required this.categoryController,
     required this.noteController,
@@ -34,7 +35,7 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
+      title: const Text(
         'Chỉnh sửa khoản chi/thu',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
@@ -46,42 +47,42 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
             TextFormField(
               controller: widget.dateController,
               readOnly: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Ngày',
                 suffixIcon: Icon(Icons.calendar_today),
                 border: OutlineInputBorder(),
               ),
               onTap: () => _selectDate(context),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Note Input
             TextField(
               controller: widget.noteController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Ghi chú',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Amount Input
             TextField(
               controller: widget.amountController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Số tiền',
                 suffixText: 'đ',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Categories Grid
             SizedBox(
               height: 300, // Giới hạn chiều cao của GridView
               child: GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: _categories().length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   childAspectRatio: 1,
                   crossAxisSpacing: 8,
@@ -109,10 +110,10 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
                         children: [
                           Icon(category['icon'],
                               size: 40, color: category['color']),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             category['name'],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -128,27 +129,27 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Hủy'),
+          child: const Text('Hủy'),
         ),
         ElevatedButton(
           onPressed: () {
             if (widget.amountController.text.isEmpty ||
                 double.tryParse(widget.amountController.text) == null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Vui lòng nhập số tiền hợp lệ!')),
+                const SnackBar(content: Text('Vui lòng nhập số tiền hợp lệ!')),
               );
               return;
             }
             if (widget.categoryController.text.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Vui lòng chọn danh mục!')),
+                const SnackBar(content: Text('Vui lòng chọn danh mục!')),
               );
               return;
             }
             widget.onSave();
             Navigator.pop(context);
           },
-          child: Text('Lưu'),
+          child: const Text('Lưu'),
         ),
       ],
     );
@@ -188,13 +189,15 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
   }
 
   // Show a dialog for editing or deleting the selected category
-  void _showCategoryActionDialog(BuildContext context, Map<String, dynamic> category) {
+  void _showCategoryActionDialog(
+      BuildContext context, Map<String, dynamic> category) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Chọn hành động'),
-          content: Text('Bạn muốn thay đổi hoặc xoá mục "${category['name']}"?'),
+          title: const Text('Chọn hành động'),
+          content:
+              Text('Bạn muốn thay đổi hoặc xoá mục "${category['name']}"?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -204,21 +207,22 @@ class _EditBudgetDialogState extends State<EditBudgetDialog> {
                 });
                 Navigator.pop(context);
               },
-              child: Text('Thay đổi'),
+              child: const Text('Thay đổi'),
             ),
             TextButton(
               onPressed: () {
                 setState(() {
                   selectedCategory = ''; // Reset category selection
-                  widget.categoryController.clear(); // Clear the category controller
+                  widget.categoryController
+                      .clear(); // Clear the category controller
                 });
                 Navigator.pop(context);
               },
-              child: Text('Xoá'),
+              child: const Text('Xoá'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Hủy'),
+              child: const Text('Hủy'),
             ),
           ],
         );

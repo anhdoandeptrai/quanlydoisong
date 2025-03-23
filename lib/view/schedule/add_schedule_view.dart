@@ -4,6 +4,8 @@ import '../../controllers/schedule_controller.dart';
 import 'package:intl/intl.dart';
 
 class AddScheduleView extends StatefulWidget {
+  const AddScheduleView({super.key});
+
   @override
   _AddScheduleViewState createState() => _AddScheduleViewState();
 }
@@ -21,7 +23,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Thêm Lịch Trình Mới',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -46,12 +48,12 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Schedule Title Input
-                        Text(
+                        const Text(
                           'Tiêu Đề',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         TextFormField(
                           decoration: InputDecoration(
                             hintText: 'Nhập tiêu đề',
@@ -68,18 +70,18 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                             title = value!;
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Schedule Type Dropdown
-                        Text(
+                        const Text(
                           'Loại Lịch Trình',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         DropdownButtonFormField<String>(
                           value: type,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 16),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12)),
@@ -110,16 +112,16 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                             });
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Start Time Picker
-                        Text(
+                        const Text(
                           'Thời Gian Bắt Đầu',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         OutlinedButton.icon(
-                          icon: Icon(Icons.calendar_today),
+                          icon: const Icon(Icons.calendar_today),
                           label: Text(
                             startTime == null
                                 ? 'Chọn Thời Gian Bắt Đầu'
@@ -127,7 +129,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                                     .format(startTime!),
                           ),
                           style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -158,16 +160,16 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                             }
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // End Time Picker
-                        Text(
+                        const Text(
                           'Thời Gian Kết Thúc',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         OutlinedButton.icon(
-                          icon: Icon(Icons.calendar_today_outlined),
+                          icon: const Icon(Icons.calendar_today_outlined),
                           label: Text(
                             endTime == null
                                 ? 'Chọn Thời Gian Kết Thúc'
@@ -175,7 +177,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                                     .format(endTime!),
                           ),
                           style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -210,17 +212,17 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 // Add Schedule Button
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     backgroundColor: Colors.blue,
                   ),
-                  child: Text(
+                  child: const Text(
                     'Thêm Lịch Trình',
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
@@ -239,8 +241,13 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                         return;
                       }
                       _formKey.currentState!.save();
-                      scheduleController.addSchedule(
-                          title, startTime!, endTime!, type);
+                      final controller = Get.find<ScheduleController>();
+                      controller.addSchedule(
+                        title,
+                        startTime!,
+                        endTime!,
+                        type,
+                      );
                       Get.back();
                       Get.snackbar(
                         'Thành Công',

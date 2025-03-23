@@ -4,6 +4,8 @@ import 'package:quanlydoisong/utils/file_storage.dart';
 import 'package:quanlydoisong/utils/shared_preferences.dart';
 
 class BoxChatAI extends StatefulWidget {
+  const BoxChatAI({super.key});
+
   @override
   _BoxChatAIState createState() => _BoxChatAIState();
 }
@@ -97,7 +99,8 @@ class _BoxChatAIState extends State<BoxChatAI> {
 
   void suggestActivity() {
     if (selectedInterest != 'Chọn sở thích') {
-      geminiOutput("Tôi thích $selectedInterest. Hôm nay tôi nên làm gì?");
+      geminiOutput(
+          "Tôi thích $selectedInterest. Hôm nay tôi nên làm gì?, hãy trả lời rõ ràng và cụ thể nhất có thể.");
     } else {
       setState(() {
         chatHistory.add({

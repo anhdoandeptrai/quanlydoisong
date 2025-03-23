@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:intl/intl.dart';
 import 'package:quanlydoisong/view/BudgetPage/calender_page.dart';
 import 'report_page.dart';
@@ -9,7 +7,7 @@ import 'report_page.dart';
 class BudgetPage extends StatefulWidget {
   final String title;
 
-  BudgetPage({required this.title});
+  const BudgetPage({super.key, required this.title});
 
   @override
   _BudgetPageState createState() => _BudgetPageState();
@@ -50,17 +48,17 @@ class _BudgetPageState extends State<BudgetPage> {
           bottom: const TabBar(
             tabs: [
               Tab(
+                  icon: Icon(Icons.attach_money, color: Colors.black),
                   child: Text(
                     'Tiền chi',
                     style: TextStyle(color: Colors.black),
-                  ),
-                  icon: Icon(Icons.attach_money, color: Colors.black)),
+                  )),
               Tab(
+                  icon: Icon(Icons.money, color: Colors.black),
                   child: Text(
                     'Tiền thu',
                     style: TextStyle(color: Colors.black),
-                  ),
-                  icon: Icon(Icons.money, color: Colors.black)),
+                  )),
             ],
           ),
         ),
@@ -113,7 +111,7 @@ class _BudgetPageState extends State<BudgetPage> {
           const SizedBox(height: 10),
           _buildTextField('Ghi chú', 'Chưa nhập vào', noteController),
           const SizedBox(height: 10),
-          _buildTextField('$title', '0', amountController,
+          _buildTextField(title, '0', amountController,
               suffixText: 'đ', isNumber: true),
           const SizedBox(height: 10),
           _buildCategoryGrid(categories),
@@ -355,16 +353,16 @@ class _BudgetPageState extends State<BudgetPage> {
                   labelText: 'Biểu tượng',
                   border: OutlineInputBorder(),
                 ),
-                items: [
-                  const DropdownMenuItem(
+                items: const [
+                  DropdownMenuItem(
                     value: Icons.category,
                     child: Text('Mặc định'),
                   ),
-                  const DropdownMenuItem(
+                  DropdownMenuItem(
                     value: Icons.fastfood,
                     child: Text('Ăn uống'),
                   ),
-                  const DropdownMenuItem(
+                  DropdownMenuItem(
                     value: Icons.shopping_bag,
                     child: Text('Mua sắm'),
                   ),
@@ -380,16 +378,16 @@ class _BudgetPageState extends State<BudgetPage> {
                   labelText: 'Màu sắc',
                   border: OutlineInputBorder(),
                 ),
-                items: [
-                  const DropdownMenuItem(
+                items: const [
+                  DropdownMenuItem(
                     value: Colors.orange,
                     child: Text('Cam'),
                   ),
-                  const DropdownMenuItem(
+                  DropdownMenuItem(
                     value: Colors.green,
                     child: Text('Xanh lá'),
                   ),
-                  const DropdownMenuItem(
+                  DropdownMenuItem(
                     value: Colors.blue,
                     child: Text('Xanh dương'),
                   ),
@@ -467,8 +465,7 @@ class _BudgetPageState extends State<BudgetPage> {
                         });
                         Navigator.of(context).pop(); // Đóng hộp thoại
                       },
-                    ))
-                .toList(),
+                    )),
           ],
         );
       },

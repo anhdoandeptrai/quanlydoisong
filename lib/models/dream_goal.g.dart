@@ -1,44 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'schedule.dart';
+part of 'dream_goal.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ScheduleAdapter extends TypeAdapter<Schedule> {
+class DreamGoalAdapter extends TypeAdapter<DreamGoal> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  Schedule read(BinaryReader reader) {
+  DreamGoal read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Schedule(
-      id: fields[0] as String,
-      title: fields[1] as String,
-      startTime: fields[2] as DateTime,
-      endTime: fields[3] as DateTime,
-      type: fields[4] as String,
+    return DreamGoal(
+      title: fields[0] as String,
+      description: fields[1] as String,
+      progress: fields[2] as double,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Schedule obj) {
+  void write(BinaryWriter writer, DreamGoal obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.title)
-      ..writeByte(2)
-      ..write(obj.startTime)
       ..writeByte(3)
-      ..write(obj.endTime)
-      ..writeByte(4)
-      ..write(obj.type);
+      ..writeByte(0)
+      ..write(obj.title)
+      ..writeByte(1)
+      ..write(obj.description)
+      ..writeByte(2)
+      ..write(obj.progress);
   }
 
   @override
@@ -47,7 +41,7 @@ class ScheduleAdapter extends TypeAdapter<Schedule> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ScheduleAdapter &&
+      other is DreamGoalAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

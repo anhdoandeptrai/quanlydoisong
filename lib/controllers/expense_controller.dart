@@ -20,8 +20,9 @@ class ExpenseController extends GetxController {
     loadExpenses();
   }
 
-  void addExpense(double amount, String category, DateTime date, String description) {
-    var uuid = Uuid();
+  void addExpense(
+      double amount, String category, DateTime date, String description) {
+    var uuid = const Uuid();
     var expense = Expense(
       id: uuid.v4(),
       amount: amount,
@@ -41,7 +42,8 @@ class ExpenseController extends GetxController {
     loadExpenses();
   }
 
-  void updateExpense(String id, double amount, String category, DateTime date, String description) {
+  void updateExpense(String id, double amount, String category, DateTime date,
+      String description) {
     final index = expenses.indexWhere((e) => e.id == id);
     if (index != -1) {
       expenses[index] = Expense(

@@ -10,14 +10,16 @@ class ExpenseListView extends StatelessWidget {
   final controller.ExpenseController expenseController =
       Get.put(controller.ExpenseController());
 
+  ExpenseListView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quản Lý Chi Tiêu'),
+        title: const Text('Quản Lý Chi Tiêu'),
         backgroundColor: Colors.blueAccent,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.blueAccent, Colors.lightBlue],
               begin: Alignment.topLeft,
@@ -34,7 +36,8 @@ class ExpenseListView extends StatelessWidget {
               return Center(
                 child: Text(
                   'Tổng: ${NumberFormat.currency(locale: 'vi', symbol: 'VNĐ').format(totalAmount)}',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               );
             }),
@@ -50,7 +53,7 @@ class ExpenseListView extends StatelessWidget {
             _groupExpensesByCategory(expenseController.expenses);
 
         return ListView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           children: groupedExpenses.entries.map((entry) {
             final category = entry.key;
             final expenses = entry.value;
@@ -66,10 +69,10 @@ class ExpenseListView extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(() => AddExpenseView());
+          Get.to(() => const AddExpenseView());
         },
-        child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -79,20 +82,20 @@ class ExpenseListView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.money_off, size: 80, color: Colors.grey),
-          SizedBox(height: 16),
-          Text(
+          const Icon(Icons.money_off, size: 80, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text(
             'Không có chi tiêu nào.',
             style: TextStyle(fontSize: 18, color: Colors.grey),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => Get.to(() => AddExpenseView()),
-            child: Text('Thêm Chi Tiêu Ngay'),
+            onPressed: () => Get.to(() => const AddExpenseView()),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blueAccent,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
+            child: const Text('Thêm Chi Tiêu Ngay'),
           ),
         ],
       ),
@@ -119,25 +122,25 @@ class ExpenseListView extends StatelessWidget {
           title: Row(
             children: [
               Icon(icon, color: color, size: 30),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
-                '$category',
-                style: TextStyle(
+                category,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                 'Tổng: ${NumberFormat.currency(locale: 'vi', symbol: 'VNĐ').format(totalCategoryAmount)}',
-                style: TextStyle(fontSize: 16, color: Colors.green),
+                style: const TextStyle(fontSize: 16, color: Colors.green),
               ),
             ],
           ),
+          tilePadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           children:
               expenses.map((expense) => ExpenseTile(expense: expense)).toList(),
-          tilePadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         ),
       ),
     );
@@ -200,7 +203,7 @@ class ExpenseListView extends StatelessWidget {
 class ExpenseTile extends StatelessWidget {
   final Expense expense;
 
-  const ExpenseTile({Key? key, required this.expense}) : super(key: key);
+  const ExpenseTile({super.key, required this.expense});
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +212,7 @@ class ExpenseTile extends StatelessWidget {
     return ListTile(
       title: Text(
         expense.description.isEmpty ? 'Không có mô tả' : expense.description,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
         'Ngày: $formattedDate\nSố tiền: ${NumberFormat.currency(locale: 'vi', symbol: 'VNĐ').format(expense.amount)}',
@@ -219,14 +222,14 @@ class ExpenseTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: Icon(Icons.edit, color: Colors.blue),
+            icon: const Icon(Icons.edit, color: Colors.blue),
             tooltip: 'Chỉnh sửa',
             onPressed: () {
               Get.to(() => EditExpenseView(expenseId: expense.id));
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
+            icon: const Icon(Icons.delete, color: Colors.red),
             tooltip: 'Xóa',
             onPressed: () {
               Get.defaultDialog(

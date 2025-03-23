@@ -1,25 +1,28 @@
 import 'package:get/get.dart';
-import 'package:quanlydoisong/models/schedule.dart';
-import 'package:quanlydoisong/services/data_service.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
+import '../models/schedule.dart';
 
 class ScheduleController extends GetxController {
-  final DataService dataService = DataService();
-
-  var schedules = <Schedule>[].obs;
+  final RxList<Schedule> schedules = <Schedule>[].obs;
+  late final Box<Schedule> _scheduleBox = Hive.box<Schedule>('schedules');
 
   @override
-  void onReady() {
-    super.onReady();
-    loadSchedules();
+  void onInit() {
+    super.onInit();
+    _loadSchedules();
+    Hive.box<Schedule>('schedules').listenable().addListener(_loadSchedules);
   }
 
-  void loadSchedules() {
-    schedules.assignAll(dataService.scheduleBox.values.toList());
+  void _loadSchedules() {
+    final box = Hive.box<Schedule>('schedules');
+    schedules.value = box.values.toList();
   }
 
-  void addSchedule(String title, DateTime startTime, DateTime endTime, String type) {
-    var uuid = Uuid();
+  void addSchedule(
+      String title, DateTime startTime, DateTime endTime, String type) {
+    var uuid = const Uuid();
     var schedule = Schedule(
       id: uuid.v4(),
       title: title,
@@ -27,55 +30,47 @@ class ScheduleController extends GetxController {
       endTime: endTime,
       type: type,
     );
-    dataService.scheduleBox.put(schedule.id, schedule);
     schedules.add(schedule);
-   
+    _scheduleBox.put(schedule.id, schedule); // Lưu vào Hive
   }
 
   void removeSchedule(String id) {
-    dataService.scheduleBox.delete(id);
     schedules.removeWhere((schedule) => schedule.id == id);
+    _scheduleBox.delete(id); // Xóa khỏi Hive
   }
 
-  void updateSchedule(String id, String title, DateTime startTime, DateTime endTime, String type) {
-    var schedule = dataService.scheduleBox.get(id);
-    if (schedule != null) {
-      schedule.title = title;
-      schedule.startTime = startTime;
-      schedule.endTime = endTime;
-      schedule.type = type;
-      schedule.save();
-      loadSchedules();
-    }
+  void updateSchedule(String id, String title, DateTime startTime,
+      DateTime endTime, String type) {
+    var schedule = schedules.firstWhere((s) => s.id == id);
+    schedule.title = title;
+    schedule.startTime = startTime;
+    schedule.endTime = endTime;
+    schedule.type = type;
+    schedules.refresh();
+    _scheduleBox.put(schedule.id, schedule); // Cập nhật trong Hive
   }
 
-  // Tính tổng thời gian theo loại và tháng
-  Map<String, Map<int, Duration>> getTotalTimeByTypeAndMonth() {
-    Map<String, Map<int, Duration>> result = {};
-
-    for (var schedule in schedules) {
-      final type = schedule.type;
-      final month = schedule.startTime.month;
-
-      final duration = schedule.endTime.difference(schedule.startTime);
-
-      if (!result.containsKey(type)) {
-        result[type] = {};
-      }
-      if (!result[type]!.containsKey(month)) {
-        result[type]![month] = Duration.zero;
-      }
-
-      result[type]![month] = result[type]![month]! + duration;
-    }
-
-    return result;
+  void toggleCompletion(String id) {
+    var schedule = schedules.firstWhere((s) => s.id == id);
+    schedule.isCompleted = !schedule.isCompleted;
+    schedules.refresh();
+    _scheduleBox.put(schedule.id, schedule); // Cập nhật trạng thái trong Hive
   }
 
-  // Getter để tính tổng thời gian của từng loại
-  Duration getTotalTimeByType(String type) {
-    return schedules
-        .where((schedule) => schedule.type == type)
-        .fold(Duration.zero, (sum, schedule) => sum + schedule.endTime.difference(schedule.startTime));
+  List<Schedule> getTodaySchedules(DateTime today) {
+    return schedules.where((schedule) {
+      return schedule.startTime.year == today.year &&
+          schedule.startTime.month == today.month &&
+          schedule.startTime.day == today.day;
+    }).toList();
+  }
+
+  double getCompletionPercentage(DateTime today) {
+    final todaySchedules = getTodaySchedules(today);
+    if (todaySchedules.isEmpty) return 0.0;
+
+    final completedCount =
+        todaySchedules.where((schedule) => schedule.isCompleted).length;
+    return (completedCount / todaySchedules.length) * 100;
   }
 }

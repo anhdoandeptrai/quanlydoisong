@@ -7,7 +7,7 @@ import 'package:quanlydoisong/models/expense.dart';
 class EditExpenseView extends StatefulWidget {
   final String expenseId;
 
-  EditExpenseView({required this.expenseId});
+  const EditExpenseView({super.key, required this.expenseId});
 
   @override
   _EditExpenseViewState createState() => _EditExpenseViewState();
@@ -50,7 +50,7 @@ class _EditExpenseViewState extends State<EditExpenseView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chỉnh Sửa Chi Tiêu'),
+        title: const Text('Chỉnh Sửa Chi Tiêu'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,8 +61,9 @@ class _EditExpenseViewState extends State<EditExpenseView> {
               children: [
                 TextFormField(
                   initialValue: amount.toString(),
-                  decoration: InputDecoration(labelText: 'Số Tiền'),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(labelText: 'Số Tiền'),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Vui lòng nhập số tiền';
@@ -76,10 +77,10 @@ class _EditExpenseViewState extends State<EditExpenseView> {
                     amount = double.parse(value!);
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   initialValue: category,
-                  decoration: InputDecoration(labelText: 'Danh Mục'),
+                  decoration: const InputDecoration(labelText: 'Danh Mục'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Vui lòng nhập danh mục';
@@ -90,7 +91,7 @@ class _EditExpenseViewState extends State<EditExpenseView> {
                     category = value!;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
@@ -115,18 +116,18 @@ class _EditExpenseViewState extends State<EditExpenseView> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   initialValue: description,
-                  decoration: InputDecoration(labelText: 'Mô Tả'),
+                  decoration: const InputDecoration(labelText: 'Mô Tả'),
                   maxLines: 3,
                   onSaved: (value) {
                     description = value ?? '';
                   },
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 ElevatedButton(
-                  child: Text('Lưu Thay Đổi'),
+                  child: const Text('Lưu Thay Đổi'),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (date == null) {

@@ -1,17 +1,25 @@
 import 'package:hive/hive.dart';
+import 'package:quanlydoisong/models/dream_goal.dart';
 import 'package:quanlydoisong/models/transaction_model.dart';
-
 import '../models/schedule.dart';
 import '../models/expense.dart';
 
 class DataService {
-  // Schedules
+  Future<void> initHive() async {
+    await Hive.openBox<DreamGoal>('dreams');
+  }
+
   Box<Schedule> get scheduleBox => Hive.box<Schedule>('schedules');
-
-  // Attendances
-
-  // Expenses
   Box<Expense> get expenseBox => Hive.box<Expense>('expenses');
-  // Transactions
-  Box<TransactionModel> get transactionBox => Hive.box<TransactionModel>('transactions');
+  Box<TransactionModel> get transactionBox =>
+      Hive.box<TransactionModel>('transactions');
+  Box<DreamGoal> get dreamBox => Hive.box<DreamGoal>('dreams');
+
+  void saveDream(DreamGoal dream) {
+    dreamBox.add(dream);
+  }
+
+  List<DreamGoal> loadDreams() {
+    return dreamBox.values.toList();
+  }
 }

@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quanlydoisong/models/users.dart';
 
 class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
+
   @override
   _SignupPageState createState() => _SignupPageState();
 }
@@ -17,11 +19,20 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool isSubscribed = false; // Trạng thái nhận bản tin
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   /// Hàm xử lý đăng ký
   void _signup() async {
@@ -34,6 +45,9 @@ class _SignupPageState extends State<SignupPage> {
     final String username = _usernameController.text.trim();
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
+    final double height = double.tryParse(_heightController.text.trim()) ?? 0.0;
+    final double weight = double.tryParse(_weightController.text.trim()) ?? 0.0;
+    final String location = _locationController.text.trim();
 
     try {
       UserCredential userCredential =
@@ -49,12 +63,20 @@ class _SignupPageState extends State<SignupPage> {
         UserModel newUser = UserModel(
           id: firebaseUser.uid,
           username: username,
+          email: email,
+          phone: '',
+          location: location,
+          height: height,
+          weight: weight,
           interests: [],
           // subscribed: isSubscribed, // Lưu trạng thái nhận bản tin
         );
 
         // Lưu vào Firestore
-        await _firestore.collection('users').doc(firebaseUser.uid).set(newUser.toMap());
+        await _firestore
+            .collection('users')
+            .doc(firebaseUser.uid)
+            .set(newUser.toMap());
 
         // Lưu vào Hive
         var userBox = Hive.box('userBox');
@@ -62,7 +84,9 @@ class _SignupPageState extends State<SignupPage> {
 
         // Hiển thị thông báo thành công
         Get.snackbar('Thành công', 'Tài khoản của bạn đã được tạo.',
-            snackPosition: SnackPosition.TOP, backgroundColor: Colors.green, colorText: Colors.white);
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green,
+            colorText: Colors.white);
 
         // Điều hướng sang trang lựa chọn
         Get.offNamed('/selection');
@@ -129,38 +153,56 @@ class _SignupPageState extends State<SignupPage> {
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                buildInputField(_usernameController, Icons.person, "Tên người dùng", false),
+                buildInputField(
+                    _usernameController, Icons.person, "Tên người dùng", false),
                 const SizedBox(height: 15),
                 buildInputField(_emailController, Icons.email, "E-mail", false,
                     validator: (value) {
-                  if (value == null || !value.contains('@')) return "Email không hợp lệ";
+                  if (value == null || !value.contains('@')) {
+                    return "Email không hợp lệ";
+                  }
                   return null;
                 }),
                 const SizedBox(height: 15),
-                buildInputField(_passwordController, Icons.lock, "Mật khẩu", true,
+                buildInputField(
+                    _passwordController, Icons.lock, "Mật khẩu", true,
                     validator: (value) {
-                  if (value == null || value.length < 6) return "Mật khẩu tối thiểu 6 ký tự";
+                  if (value == null || value.length < 6) {
+                    return "Mật khẩu tối thiểu 6 ký tự";
+                  }
                   return null;
                 }),
+                const SizedBox(height: 15),
+                buildInputField(
+                    _heightController, Icons.height, "Chiều Cao (m)", false),
+                const SizedBox(height: 15),
+                buildInputField(_weightController, Icons.fitness_center,
+                    "Cân Nặng (kg)", false),
+                const SizedBox(height: 15),
+                buildLocationField(),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _signup,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Đăng ký', style: TextStyle(color: Colors.white, fontSize: 18)),
+                      : const Text('Đăng ký',
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
                 ),
                 const SizedBox(height: 20),
-                buildOutlinedButton(Icons.g_mobiledata, 'Tiếp tục với Google', _signInWithGoogle),
+                buildOutlinedButton(Icons.g_mobiledata, 'Tiếp tục với Google',
+                    _signInWithGoogle),
                 Row(
                   children: [
                     Checkbox(
                       value: isSubscribed,
-                      onChanged: (value) => setState(() => isSubscribed = value!),
+                      onChanged: (value) =>
+                          setState(() => isSubscribed = value!),
                     ),
                     const Expanded(
                       child: Text(
@@ -178,8 +220,10 @@ class _SignupPageState extends State<SignupPage> {
                     children: [
                       TextSpan(
                         text: 'Đăng nhập',
-                        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-                        recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed('/login'),
+                        style: const TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => Get.toNamed('/login'),
                       ),
                     ],
                   ),
@@ -193,7 +237,8 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   /// Hàm tạo ô nhập liệu
-  Widget buildInputField(TextEditingController controller, IconData icon, String hint, bool isPassword,
+  Widget buildInputField(TextEditingController controller, IconData icon,
+      String hint, bool isPassword,
       {String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
@@ -204,14 +249,36 @@ class _SignupPageState extends State<SignupPage> {
         fillColor: Colors.white,
         prefixIcon: Icon(icon),
         hintText: hint,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      ),
+    );
+  }
+
+  /// Hàm tạo ô nhập liệu cho địa điểm
+  Widget buildLocationField() {
+    return TextFormField(
+      controller: _locationController,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        prefixIcon: const Icon(Icons.location_on),
+        hintText: "Nhập địa điểm",
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
     );
   }
 
   /// Hàm tạo nút hành động
-  Widget buildOutlinedButton(IconData icon, String label, VoidCallback onPressed) {
+  Widget buildOutlinedButton(
+      IconData icon, String label, VoidCallback onPressed) {
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, color: Colors.blue),

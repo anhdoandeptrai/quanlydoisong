@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class EditScheduleView extends StatefulWidget {
   final String scheduleId;
 
-  EditScheduleView({required this.scheduleId});
+  const EditScheduleView({super.key, required this.scheduleId});
 
   @override
   _EditScheduleViewState createState() => _EditScheduleViewState();
@@ -22,6 +22,7 @@ class _EditScheduleViewState extends State<EditScheduleView> {
   String type = 'Study'; // Mặc định là Học tập
   DateTime? startTime;
   DateTime? endTime;
+  bool completed = false;
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _EditScheduleViewState extends State<EditScheduleView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chỉnh Sửa Lịch Trình'),
+        title: const Text('Chỉnh Sửa Lịch Trình'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,7 +52,7 @@ class _EditScheduleViewState extends State<EditScheduleView> {
                 // Tiêu đề lịch trình
                 TextFormField(
                   initialValue: title,
-                  decoration: InputDecoration(labelText: 'Tiêu Đề'),
+                  decoration: const InputDecoration(labelText: 'Tiêu Đề'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Vui lòng nhập tiêu đề';
@@ -62,11 +63,11 @@ class _EditScheduleViewState extends State<EditScheduleView> {
                     title = value!;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Loại lịch trình (Học tập hoặc Làm việc)
                 DropdownButtonFormField<String>(
                   value: type,
-                  decoration: InputDecoration(labelText: 'Loại'),
+                  decoration: const InputDecoration(labelText: 'Loại'),
                   items: [
                     'Study',
                     'Work',
@@ -105,7 +106,7 @@ class _EditScheduleViewState extends State<EditScheduleView> {
                     });
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Chọn thời gian bắt đầu
                 Row(
                   children: [
@@ -144,7 +145,7 @@ class _EditScheduleViewState extends State<EditScheduleView> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Chọn thời gian kết thúc
                 Row(
                   children: [
@@ -158,7 +159,7 @@ class _EditScheduleViewState extends State<EditScheduleView> {
                             context: context,
                             initialDate: endTime ??
                                 (startTime ?? DateTime.now())
-                                    .add(Duration(hours: 1)),
+                                    .add(const Duration(hours: 1)),
                             firstDate: startTime ?? DateTime.now(),
                             lastDate: DateTime(2101),
                           );
@@ -185,47 +186,31 @@ class _EditScheduleViewState extends State<EditScheduleView> {
                     ),
                   ],
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 16),
+                // Checkbox để đánh dấu hoàn thành
+                CheckboxListTile(
+                  title: const Text('Hoàn thành'),
+                  value: completed,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      completed = value ?? false;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
                 // Nút Lưu
                 ElevatedButton(
-                  child: Text('Lưu Thay Đổi'),
+                  child: const Text('Lưu Thay Đổi'),
                   onPressed: () {
-                    if (_formKey.currentState!.validate() &&
-                        startTime != null &&
-                        endTime != null) {
-                      if (endTime!.isBefore(startTime!)) {
-                        Get.snackbar(
-                          'Lỗi',
-                          'Thời gian kết thúc phải sau thời gian bắt đầu',
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
-                        );
-                        return;
-                      }
-                      _formKey.currentState!.save();
-                      scheduleController.updateSchedule(
-                        schedule.id,
-                        title,
-                        startTime!,
-                        endTime!,
-                        type,
-                      );
-                      Get.back();
-                      Get.snackbar(
-                        'Thành Công',
-                        'Đã cập nhật lịch trình',
-                        snackPosition: SnackPosition.TOP,
-                      );
-                    } else {
-                      Get.snackbar(
-                        'Lỗi',
-                        'Vui lòng điền đầy đủ thông tin',
-                        snackPosition: SnackPosition.TOP,
-                        backgroundColor: Colors.redAccent,
-                        colorText: Colors.white,
-                      );
-                    }
+                    final controller = Get.find<ScheduleController>();
+                    controller.updateSchedule(
+                      schedule.id,
+                      title,
+                      startTime!,
+                      endTime!,
+                      type,
+                    );
+                    Get.back();
                   },
                 ),
               ],

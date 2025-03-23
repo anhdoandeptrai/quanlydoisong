@@ -5,28 +5,54 @@ import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  late bool isDarkMode;
+
+  @override
+  void initState() {
+    super.initState();
+    var box = Hive.box('settings');
+    isDarkMode = box.get('isDarkMode', defaultValue: false);
+
+    // Đợi frame đầu tiên render xong rồi mới cập nhật theme
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.changeTheme(isDarkMode ? customDarkTheme : customLightTheme);
+      Get.forceAppUpdate();
+    });
+  }
+
+  void _toggleDarkMode(bool value) {
+    setState(() {
+      isDarkMode = value;
+    });
+
+    var box = Hive.box('settings');
+    box.put('isDarkMode', value);
+
+    Get.changeTheme(value ? customDarkTheme : customLightTheme);
+    Get.forceAppUpdate(); // Cập nhật lại toàn bộ UI
+  }
 
   Future<void> _exportDataToExcel() async {
     try {
-      // Step 1: Load data from Hive
       var box = Hive.box('settings');
       var data = box.toMap();
 
-      // Step 2: Create an Excel file
       var excel = Excel.createExcel();
       var sheet = excel['Sheet1'];
 
-      // Add headers
       sheet.appendRow(['Key', 'Value']);
-
-      // Add data rows
       data.forEach((key, value) {
         sheet.appendRow([key.toString(), value.toString()]);
       });
 
-      // Step 3: Save the file
       var directory = await getApplicationDocumentsDirectory();
       String filePath = '${directory.path}/report.xlsx';
       List<int>? fileBytes = excel.save();
@@ -34,15 +60,11 @@ class SettingsPage extends StatelessWidget {
         File(filePath)
           ..createSync(recursive: true)
           ..writeAsBytesSync(fileBytes);
-        print('File saved: $filePath');
+        Get.snackbar("Thành Công", "Báo cáo đã được lưu tại: $filePath",
+            snackPosition: SnackPosition.TOP);
       }
-
-      // Show success message
-      Get.snackbar("Thành Công", "Báo cáo đã được xuất: $filePath",
-          snackPosition: SnackPosition.TOP);
     } catch (e) {
-      print('Error exporting data: $e');
-      Get.snackbar("Lỗi", "Không thể xuất báo cáo",
+      Get.snackbar("Lỗi", "Không thể xuất báo cáo: ${e.toString()}",
           snackPosition: SnackPosition.TOP);
     }
   }
@@ -50,12 +72,12 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Cài Đặt',
             style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 4.0,
       ),
       body: Padding(
@@ -66,13 +88,23 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 50),
+                SwitchListTile(
+                  title:
+                      const Text('Chế độ tối', style: TextStyle(fontSize: 18)),
+                  value: isDarkMode,
+                  onChanged: _toggleDarkMode,
+                  secondary: Icon(
+                    isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     var box = Hive.box('settings');
                     box.put('isLoggedIn', false);
-                    Get.offAllNamed('/');
+                    Get.offAllNamed('/welcome');
                   },
-                  child: const Text('Đăng Xuất'),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.red,
@@ -82,11 +114,11 @@ class SettingsPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
+                  child: const Text('Đăng Xuất'),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _exportDataToExcel,
-                  child: const Text('Xuất Báo Cáo Excel'),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.green,
@@ -96,6 +128,7 @@ class SettingsPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
+                  child: const Text('Xuất Báo Cáo Excel'),
                 ),
               ],
             ),
@@ -105,3 +138,33 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
+
+// ========================
+// 🎨 TUỲ CHỈNH DARK MODE
+// ========================
+final ThemeData customLightTheme = ThemeData.light().copyWith(
+  scaffoldBackgroundColor: Colors.grey[100],
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.blueAccent,
+    titleTextStyle: TextStyle(
+        color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+  ),
+  textTheme: const TextTheme(
+    bodyMedium: TextStyle(color: Colors.black),
+  ),
+);
+
+final ThemeData customDarkTheme = ThemeData.dark().copyWith(
+  scaffoldBackgroundColor: Colors.grey[800],
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.grey[700],
+    titleTextStyle: const TextStyle(
+        color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    iconTheme: const IconThemeData(color: Colors.white),
+  ),
+  textTheme: const TextTheme(
+    bodyMedium: TextStyle(color: Colors.white),
+    titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+  ),
+  cardColor: Colors.grey[700],
+);
