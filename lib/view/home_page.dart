@@ -36,38 +36,42 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Quản Lý Đời Sống',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-        backgroundColor: Colors.blueAccent,
-      ),
+      appBar: _selectedIndex == 0
+          ? AppBar(
+              automaticallyImplyLeading: false,
+              title: const Text(
+                'Quản Lý Đời Sống',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+              ),
+              backgroundColor: Colors.blueAccent,
+            )
+          : null, // Không hiển thị AppBar ở các tab khác
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Trang Chủ',
+            label: '', // Không cần label
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chat AI',
+            label: '', // Không cần label
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Cá Nhân',
+            label: '', // Không cần label
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Cài Đặt',
+            label: '', // Không cần label
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
+        showSelectedLabels: false, // Ẩn label khi được chọn
+        showUnselectedLabels: false, // Ẩn label khi không được chọn
       ),
     );
   }
@@ -153,11 +157,7 @@ class HomePageContent extends StatelessWidget {
     final features = [
       {'icon': Icons.schedule, 'label': 'Thời Gian', 'route': '/schedules'},
       {'icon': Icons.book, 'label': 'Chi Tiêu', 'route': '/budget'},
-      {
-        'icon': Icons.star,
-        'label': 'Ước mơ & Dự định',
-        'route': '/dreams'
-      }, // Thay thế "Lương" bằng "Ước mơ & Dự định"
+      {'icon': Icons.star, 'label': 'Dự định', 'route': '/dreams'},
       {'icon': Icons.cloud, 'label': 'Thời Tiết', 'route': '/weather'},
     ];
 

@@ -13,7 +13,7 @@ class NotificationHelper {
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings(
+        const DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
@@ -48,7 +48,7 @@ class NotificationHelper {
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
 
     final details =
-        NotificationDetails(android: androidDetails, iOS: iosDetails);
+        const NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     await flutterLocalNotificationsPlugin.show(id, title, body, details,
         payload: payload);

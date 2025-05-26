@@ -1,55 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quanlydoisong/controllers/dreams_controller.dart';
-
-import '../../models/dream_goal.dart';
-import 'add_dream_page.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DreamDetailPage extends StatelessWidget {
   final int index;
   final DreamsController controller = Get.find();
 
-  DreamDetailPage({required this.index});
+  DreamDetailPage({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
     if (index < 0 || index >= controller.dreams.length) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text("Lỗi"),
-        ),
-        body: const Center(
-          child: Text("Không tìm thấy dữ liệu ước mơ."),
-        ),
+        appBar: AppBar(title: const Text("Lỗi")),
+        body: const Center(child: Text("Không tìm thấy dữ liệu ước mơ.")),
       );
     }
 
     final dream = controller.dreams[index];
 
     return Scaffold(
+      backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
         title: Text(dream.title),
         backgroundColor: Colors.blueAccent,
         actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'edit') {
-                Get.to(() => AddDreamPage(), arguments: dream);
-              } else if (value == 'add') {
-                Get.to(() => AddDreamPage());
-              }
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              _showEditDreamDialog(
+                  context, index, dream.title, dream.description);
             },
-            itemBuilder: (BuildContext context) {
-              return [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Text('Chỉnh sửa'),
-                ),
-                const PopupMenuItem(
-                  value: 'add',
-                  child: Text('Thêm mới'),
-                ),
-              ];
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              controller.deleteDream(index);
+              if (controller.dreams.isEmpty) {
+                Get.back(); // Quay lại trang trước nếu danh sách rỗng
+              }
             },
           ),
         ],
@@ -59,72 +49,114 @@ class DreamDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Hero(
+              tag: "dream_${dream.title}",
+              child: Icon(Icons.star_rounded,
+                  size: 60, color: Colors.orangeAccent),
+            ),
+            const SizedBox(height: 16),
             Text(
               "Mô tả:",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             const SizedBox(height: 8),
-            Text(dream.description, style: const TextStyle(fontSize: 14)),
+            Text(dream.description,
+                style: const TextStyle(fontSize: 16, color: Colors.grey)),
             const SizedBox(height: 16),
             Text(
               "Danh sách công việc (${dream.tasks.length}):",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            const SizedBox(height: 8),
             Expanded(
-              child: ListView.builder(
-                itemCount: dream.tasks.length,
-                itemBuilder: (context, taskIndex) {
-                  final isCompleted = dream.tasksStatus[taskIndex];
-                  return ListTile(
-                    title: Text(
-                      dream.tasks[taskIndex],
-                      style: TextStyle(
-                        decoration: isCompleted
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                      ),
-                    ),
-                    trailing: Checkbox(
-                      value: isCompleted,
-                      onChanged: (value) {
-                        controller.toggleTaskStatus(index, taskIndex);
-                      },
-                    ),
+              child: Obx(() {
+                if (controller.dreams.isEmpty || dream.tasks.isEmpty) {
+                  return const Center(
+                    child: Text("Không có công việc nào."),
                   );
-                },
-              ),
+                }
+                return ListView.builder(
+                  itemCount: dream.tasks.length,
+                  itemBuilder: (context, taskIndex) {
+                    return ListTile(
+                      title: Text(
+                        dream.tasks[taskIndex],
+                        style: TextStyle(
+                          decoration: dream.tasksStatus[taskIndex]
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              _showEditTaskDialog(context, index, taskIndex,
+                                  dream.tasks[taskIndex]);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              controller.deleteTask(index, taskIndex);
+                            },
+                          ),
+                          Checkbox(
+                            value: dream.tasksStatus[taskIndex],
+                            onChanged: (value) {
+                              controller.toggleTaskStatus(index, taskIndex);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }),
             ),
             const SizedBox(height: 16),
-            LinearProgressIndicator(
-              value: dream.progress,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+            ElevatedButton.icon(
+              onPressed: () {
+                _showAddTaskDialog(context, index);
+              },
+              icon: const Icon(Icons.add),
+              label: const Text("Thêm công việc"),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                "${(dream.progress * 100).toInt()}% hoàn thành",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            const SizedBox(height: 16),
+            Obx(() {
+              if (controller.dreams.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              final dream = controller.dreams[index];
+              return LinearPercentIndicator(
+                lineHeight: 14,
+                percent: dream.progress,
+                backgroundColor: Colors.grey[300],
+                progressColor: Colors.blueAccent,
+                barRadius: const Radius.circular(10),
+                center: Text(
+                  "${(dream.progress * 100).toInt()}%",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-  void _editDream(BuildContext context, int index, DreamGoal dream) {
-    final TextEditingController titleController =
-        TextEditingController(text: dream.title);
-    final TextEditingController descController =
-        TextEditingController(text: dream.description);
+  void _showEditDreamDialog(BuildContext context, int index,
+      String currentTitle, String currentDesc) {
+    final titleController = TextEditingController(text: currentTitle);
+    final descController = TextEditingController(text: currentDesc);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Sửa dự án"),
+          title: const Text("Sửa dự định"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -145,9 +177,8 @@ class DreamDetailPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                controller.dreams[index].title = titleController.text;
-                controller.dreams[index].description = descController.text;
-                controller.dreams.refresh();
+                controller.editDream(
+                    index, titleController.text, descController.text);
                 Get.back();
               },
               child: const Text("Lưu"),
@@ -158,45 +189,17 @@ class DreamDetailPage extends StatelessWidget {
     );
   }
 
-  void _confirmDeleteDream(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Xóa dự án"),
-          content: const Text("Bạn có chắc chắn muốn xóa dự án này?"),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(),
-              child: const Text("Hủy"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                controller.removeDream(index);
-                Get.back();
-                Get.back(); // Quay lại danh sách dự án
-              },
-              child: const Text("Xóa"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _editTask(
-      BuildContext context, int dreamIndex, int taskIndex, String currentTask) {
-    final TextEditingController taskController =
-        TextEditingController(text: currentTask);
+  void _showAddTaskDialog(BuildContext context, int dreamIndex) {
+    final taskController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Sửa công việc"),
+          title: const Text("Thêm công việc"),
           content: TextField(
             controller: taskController,
-            decoration: const InputDecoration(labelText: "Công việc"),
+            decoration: const InputDecoration(labelText: "Tên công việc"),
           ),
           actions: [
             TextButton(
@@ -205,12 +208,10 @@ class DreamDetailPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                controller.dreams[dreamIndex].tasks[taskIndex] =
-                    taskController.text;
-                controller.dreams.refresh();
+                controller.addTask(dreamIndex, taskController.text);
                 Get.back();
               },
-              child: const Text("Lưu"),
+              child: const Text("Thêm"),
             ),
           ],
         );
@@ -218,13 +219,19 @@ class DreamDetailPage extends StatelessWidget {
     );
   }
 
-  void _deleteTask(BuildContext context, int dreamIndex, int taskIndex) {
+  void _showEditTaskDialog(
+      BuildContext context, int dreamIndex, int taskIndex, String currentTask) {
+    final taskController = TextEditingController(text: currentTask);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Xóa công việc"),
-          content: const Text("Bạn có chắc chắn muốn xóa công việc này?"),
+          title: const Text("Sửa công việc"),
+          content: TextField(
+            controller: taskController,
+            decoration: const InputDecoration(labelText: "Tên công việc"),
+          ),
           actions: [
             TextButton(
               onPressed: () => Get.back(),
@@ -232,11 +239,10 @@ class DreamDetailPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                controller.deleteTask(dreamIndex,
-                    taskIndex); // Sử dụng phương thức từ DreamsController
+                controller.editTask(dreamIndex, taskIndex, taskController.text);
                 Get.back();
               },
-              child: const Text("Xóa"),
+              child: const Text("Lưu"),
             ),
           ],
         );

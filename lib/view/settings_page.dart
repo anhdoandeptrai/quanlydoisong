@@ -24,7 +24,6 @@ class _SettingsPageState extends State<SettingsPage> {
     // Đợi frame đầu tiên render xong rồi mới cập nhật theme
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Get.changeTheme(isDarkMode ? customDarkTheme : customLightTheme);
-      Get.forceAppUpdate();
     });
   }
 
@@ -37,7 +36,6 @@ class _SettingsPageState extends State<SettingsPage> {
     box.put('isDarkMode', value);
 
     Get.changeTheme(value ? customDarkTheme : customLightTheme);
-    Get.forceAppUpdate(); // Cập nhật lại toàn bộ UI
   }
 
   Future<void> _exportDataToExcel() async {
@@ -143,28 +141,47 @@ class _SettingsPageState extends State<SettingsPage> {
 // 🎨 TUỲ CHỈNH DARK MODE
 // ========================
 final ThemeData customLightTheme = ThemeData.light().copyWith(
-  scaffoldBackgroundColor: Colors.grey[100],
+  scaffoldBackgroundColor: Colors.white, // Nền trắng
   appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.blueAccent,
+    backgroundColor: Colors.blueAccent, // AppBar màu xanh
     titleTextStyle: TextStyle(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    iconTheme: IconThemeData(color: Colors.white), // Icon màu trắng
   ),
   textTheme: const TextTheme(
-    bodyMedium: TextStyle(color: Colors.black),
+    bodyMedium: TextStyle(color: Colors.black), // Văn bản màu đen
+    titleLarge: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+  ),
+  cardColor: Colors.grey[100], // Màu nền của Card
+  iconTheme: const IconThemeData(color: Colors.blueAccent), // Icon màu xanh
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.blueAccent, // Button màu xanh
+      foregroundColor: Colors.white, // Chữ trên button màu trắng
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
   ),
 );
 
 final ThemeData customDarkTheme = ThemeData.dark().copyWith(
-  scaffoldBackgroundColor: Colors.grey[800],
-  appBarTheme: AppBarTheme(
-    backgroundColor: Colors.grey[700],
-    titleTextStyle: const TextStyle(
-        color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-    iconTheme: const IconThemeData(color: Colors.white),
+  scaffoldBackgroundColor: const Color(0xFF2D2F41), // Nền tối dịu mắt
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFF3E4155), // AppBar xám xanh nhẹ
+    titleTextStyle: TextStyle(
+        color: Color(0xFFE0E0E0), fontSize: 20, fontWeight: FontWeight.bold),
+    iconTheme: IconThemeData(color: Color(0xFFE0E0E0)), // Icon màu trắng ngà
   ),
   textTheme: const TextTheme(
-    bodyMedium: TextStyle(color: Colors.white),
+    bodyMedium: TextStyle(color: Color(0xFFE0E0E0)), // Văn bản màu trắng ngà
     titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
   ),
-  cardColor: Colors.grey[700],
+  cardColor: const Color(0xFF424769), // Card tối nhưng vẫn có độ tương phản nhẹ
+  iconTheme: const IconThemeData(color: Color(0xFFFF9800)), // Icon màu cam nhấn
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFFFF9800), // Button màu cam nổi bật
+      foregroundColor: Colors.white, // Chữ trên button màu trắng
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+  ),
 );

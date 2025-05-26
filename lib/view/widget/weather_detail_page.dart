@@ -79,10 +79,10 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     } catch (e) {}
   }
 
-  Widget buildGlassContainer(Widget child, {double opacity = 0.4}) {
+  Widget buildGlassContainer(Widget child, {double opacity = 0.7}) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 100, 222, 216).withOpacity(opacity),
+        color: Colors.white.withOpacity(opacity), // Sáng hơn, dễ nhìn hơn
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.3)),
         boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)],
@@ -100,26 +100,17 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         title: const Text(
           "Dự Báo Thời Tiết",
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black, // Màu chữ tối hơn cho dễ nhìn
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color.fromARGB(0, 223, 97, 19),
+        backgroundColor: Colors.lightBlueAccent, // AppBar màu sáng hơn
         elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF60A5FA), Color(0xFF93C5FD)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF60A5FA), Color(0xFF93C5FD)],
+            colors: [Color(0xFFB3E5FC), Color(0xFF81D4FA)], // Nền tươi sáng hơn
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -149,7 +140,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
               ),
               const SizedBox(height: 20),
               const Text("Dự báo theo giờ",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+                  style: TextStyle(
+                      color: Colors.black, fontSize: 18)), // Đổi màu chữ
               const SizedBox(height: 10),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -175,7 +167,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
               ),
               const SizedBox(height: 20),
               const Text("Dự báo các ngày tới",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+                  style: TextStyle(
+                      color: Colors.black, fontSize: 18)), // Đổi màu chữ
               const SizedBox(height: 10),
               Column(
                 children: dailyForecast

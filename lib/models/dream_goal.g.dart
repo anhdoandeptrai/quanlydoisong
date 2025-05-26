@@ -20,6 +20,7 @@ class DreamGoalAdapter extends TypeAdapter<DreamGoal> {
       title: fields[0] as String,
       description: fields[1] as String,
       progress: fields[2] as double,
+      id: '',
     );
   }
 

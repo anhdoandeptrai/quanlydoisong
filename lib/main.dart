@@ -8,18 +8,15 @@ import 'package:quanlydoisong/view/BudgetPage/budget_page.dart';
 import 'package:quanlydoisong/view/login/login_page.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:quanlydoisong/bingdings/budget_binding.dart';
-import 'package:quanlydoisong/bingdings/expense_binding.dart';
 import 'package:quanlydoisong/bingdings/schedule_binding.dart';
 import 'package:quanlydoisong/models/transaction_model.dart';
-import 'package:quanlydoisong/view/expense/expense_list_view.dart';
 import 'package:quanlydoisong/view/noti/notification_helper.dart';
 import 'package:quanlydoisong/view/noti/notification_local_helper.dart';
 import 'package:quanlydoisong/view/schedule/schedule_list_view.dart';
 import 'package:quanlydoisong/view/selection_favorite.dart';
-import 'package:quanlydoisong/wellcome.dart';
+import 'package:quanlydoisong/view/login/wellcome.dart';
 import 'bingdings/selection_binding.dart';
 import 'models/schedule.dart';
-import 'models/expense.dart';
 import 'models/dream_goal.dart'; // Import DreamGoal
 import 'services/data_service.dart';
 import 'view/ResetPassPage/reset_password.dart';
@@ -37,7 +34,6 @@ void main() async {
   await Hive.initFlutter(appDocumentDir.path);
 
   // Đăng ký các Adapter của Hive
-  Hive.registerAdapter(ExpenseAdapter());
   Hive.registerAdapter(TransactionModelAdapter());
   Hive.registerAdapter(DreamGoalAdapter()); // Đăng ký adapter cho DreamGoal
   Hive.registerAdapter(ScheduleAdapter()); // Đăng ký adapter cho Schedule
@@ -57,7 +53,6 @@ void main() async {
     await Hive.openBox('userBox');
     await Hive.openBox('settings');
     await Hive.openBox('preferencesBox');
-    await Hive.openBox<Expense>('expenses');
     await Hive.openBox<TransactionModel>('transactions');
     await Hive.openBox<DreamGoal>('dreams'); // Mở hộp dreams
     await Hive.openBox<Schedule>('schedules'); // Mở hộp schedules
@@ -118,11 +113,7 @@ class MyApp extends StatelessWidget {
           page: () => const ScheduleListView(),
           binding: ScheduleBinding(),
         ),
-        GetPage(
-          name: '/expenses',
-          page: () => ExpenseListView(),
-          binding: ExpenseBinding(),
-        ),
+
         GetPage(
           name: '/budget',
           page: () => const BudgetPage(title: 'Budget Page'),
@@ -131,7 +122,7 @@ class MyApp extends StatelessWidget {
 
         GetPage(
           name: '/dreams',
-          page: () => DreamsPage(), // Thêm tuyến đường cho DreamsPage
+          page: () => DreamsPage(), 
         ),
       ],
       debugShowCheckedModeBanner: false,

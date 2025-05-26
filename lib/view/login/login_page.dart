@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'E-mail',
                       hintText: 'Nhập email của bạn',
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).cardColor, // Màu nền động
                       prefixIcon: const Icon(Icons.email),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -152,6 +152,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 16, horizontal: 16),
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).hintColor, // Màu gợi ý động
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.color, // Màu chữ động
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -193,7 +202,11 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () => _signIn(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primary, // Màu nền động
+                      foregroundColor: Theme.of(context)
+                          .colorScheme
+                          .onPrimary, // Màu chữ động
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -201,10 +214,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: const Text(
                       'Đăng nhập',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 20),

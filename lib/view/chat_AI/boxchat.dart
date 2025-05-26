@@ -172,7 +172,13 @@ class _BoxChatAIState extends State<BoxChatAI> {
               ),
               child: Text(
                 message ?? '',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color, // Màu chữ động
+                ),
               ),
             ),
           ),
@@ -207,10 +213,19 @@ class _BoxChatAIState extends State<BoxChatAI> {
               },
               items: interests
                   .map<DropdownMenuItem<String>>(
-                      (String value) => DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          ))
+                    (String value) => DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color, // Màu chữ động
+                        ),
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -242,7 +257,7 @@ class _BoxChatAIState extends State<BoxChatAI> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Theme.of(context).cardColor, // Màu nền động
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.blueAccent),
               ),
@@ -250,10 +265,19 @@ class _BoxChatAIState extends State<BoxChatAI> {
                 controller: controller,
                 minLines: 1,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(10),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(10),
                   hintText: 'Nhập câu hỏi...',
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).hintColor, // Màu gợi ý động
+                  ),
                   border: InputBorder.none,
+                ),
+                style: TextStyle(
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color, // Màu chữ động
                 ),
               ),
             ),

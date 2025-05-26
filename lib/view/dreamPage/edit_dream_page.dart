@@ -6,7 +6,7 @@ import 'package:quanlydoisong/controllers/dreams_controller.dart';
 class EditDreamPage extends StatefulWidget {
   final String dreamId;
 
-  EditDreamPage({required this.dreamId});
+  const EditDreamPage({super.key, required this.dreamId});
 
   @override
   _EditDreamPageState createState() => _EditDreamPageState();
@@ -25,7 +25,15 @@ class _EditDreamPageState extends State<EditDreamPage> {
   @override
   void initState() {
     super.initState();
-    final dream = controller.dreams.firstWhere((d) => d.id == widget.dreamId);
+    final dream =
+        controller.dreams.firstWhere((d) => d.id == widget.dreamId, orElse: () {
+      Get.snackbar("Lỗi", "Không tìm thấy ước mơ.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white);
+      throw Exception("DreamGoal not found");
+    });
+
     titleController.text = dream.title;
     descController.text = dream.description;
     investmentController.text = dream.investment.toString();
@@ -102,7 +110,7 @@ class _EditDreamPageState extends State<EditDreamPage> {
       onChanged: (value) => setState(() => selectedCategory = value),
       decoration: InputDecoration(
         labelText: "Danh mục",
-        prefixIcon: Icon(Icons.category, color: Colors.blue),
+        prefixIcon: const Icon(Icons.category, color: Colors.blue),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
@@ -110,12 +118,12 @@ class _EditDreamPageState extends State<EditDreamPage> {
 
   Widget buildDatePicker() {
     return TextButton.icon(
-      icon: Icon(Icons.calendar_today, color: Colors.blue),
+      icon: const Icon(Icons.calendar_today, color: Colors.blue),
       label: Text(
         selectedDeadline == null
             ? "Chọn ngày hạn chót"
             : "Hạn chót: ${DateFormat('dd/MM/yyyy').format(selectedDeadline!)}",
-        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
       ),
       onPressed: () async {
         final DateTime? picked = await showDatePicker(
@@ -157,15 +165,27 @@ class _EditDreamPageState extends State<EditDreamPage> {
                   },
                 ),
                 title: Text(tasks[index]['title']),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    setState(() => tasks.removeAt(index));
-                    controller.deleteTask(
-                        controller.dreams
-                            .indexWhere((dream) => dream.id == widget.dreamId),
-                        index);
-                  },
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.white),
+                      onPressed: () {
+                        // Điều hướng đến EditDreamPage với dreamId
+                        Get.to(() => EditDreamPage(dreamId: widget.dreamId));
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() => tasks.removeAt(index));
+                        controller.deleteTask(
+                            controller.dreams.indexWhere(
+                                (dream) => dream.id == widget.dreamId),
+                            index);
+                      },
+                    ),
+                  ],
                 ),
               ),
             );
@@ -221,13 +241,13 @@ class _EditDreamPageState extends State<EditDreamPage> {
           Get.back();
         }
       },
-      child: const Text("Lưu",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
+      child: const Text("Lưu",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
 }

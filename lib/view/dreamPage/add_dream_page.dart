@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:quanlydoisong/controllers/dreams_controller.dart';
 
 class AddDreamPage extends StatefulWidget {
+  const AddDreamPage({super.key});
+
   @override
   _AddDreamPageState createState() => _AddDreamPageState();
 }
@@ -77,7 +79,7 @@ class _AddDreamPageState extends State<AddDreamPage> {
       onChanged: (value) => setState(() => selectedCategory = value),
       decoration: InputDecoration(
         labelText: "Danh mục",
-        prefixIcon: Icon(Icons.category, color: Colors.blue),
+        prefixIcon: const Icon(Icons.category, color: Colors.blue),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
@@ -85,12 +87,12 @@ class _AddDreamPageState extends State<AddDreamPage> {
 
   Widget buildDatePicker() {
     return TextButton.icon(
-      icon: Icon(Icons.calendar_today, color: Colors.blue),
+      icon: const Icon(Icons.calendar_today, color: Colors.blue),
       label: Text(
         selectedDeadline == null
             ? "Chọn ngày hạn chót"
             : "Hạn chót: ${DateFormat('dd/MM/yyyy').format(selectedDeadline!)}",
-        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
       ),
       onPressed: () async {
         final DateTime? picked = await showDatePicker(
@@ -179,13 +181,13 @@ class _AddDreamPageState extends State<AddDreamPage> {
           Get.back();
         }
       },
-      child: const Text("Lưu",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
+      child: const Text("Lưu",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
 }
